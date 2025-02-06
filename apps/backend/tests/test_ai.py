@@ -1,6 +1,10 @@
 import os
+import sys
 import pytest
 from dotenv import load_dotenv
+
+# Add the src directory to Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from src.ai.service import AIService, TextContext
 
@@ -11,8 +15,8 @@ load_dotenv()
 async def test_ai_service_initialization():
     """Test that we can initialize the AI service."""
     service = AIService()
-    assert service.model == "gpt-3.5-turbo"
-    assert service.client.api_key == os.getenv("OPENAI_API_KEY")
+    assert service.api_url == "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+    assert service.api_key == os.getenv("HF_API_KEY")
 
 @pytest.mark.asyncio
 async def test_get_suggestion():
@@ -50,9 +54,9 @@ if __name__ == "__main__":
     import asyncio
     
     async def main():
-        # Ensure OPENAI_API_KEY is set
-        if not os.getenv("OPENAI_API_KEY"):
-            print("Error: OPENAI_API_KEY environment variable not set")
+        # Ensure HF_API_KEY is set
+        if not os.getenv("HF_API_KEY"):
+            print("Error: HF_API_KEY environment variable not set")
             return
 
         service = AIService()
