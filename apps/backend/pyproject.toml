@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "nagging-backend"
+version = "0.1.0"
+description = "AI text suggestion backend service"
+authors = ["Cyril Chen <your.email@example.com>"]
+package-mode = false  # Disable package mode since we're using it for dependency management only
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.0"
+uvicorn = "^0.27.0"
+openai = "^1.10.0"
+python-dotenv = "^1.0.0"
+redis = "^5.0.1"
+pydantic = "^2.6.0"
+httpx = "^0.26.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+black = "^24.1.0"
+isort = "^5.13.0"
+mypy = "^1.8.0"
+ruff = "^0.1.14"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py311" 

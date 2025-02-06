@@ -1,54 +1,20 @@
 {
-  "name": "@nagging/source",
-  "version": "0.0.0",
-  "license": "MIT",
-  "scripts": {
-    "start": "nx serve web",
-    "dev": "nx serve web --configuration=development",
-    "build": "nx build web",
-    "lint": "nx lint",
-    "clean": "nx reset",
-    "format": "prettier --write .",
-    "type-check": "tsc --noEmit"
-  },
+  "name": "nagging",
+  "version": "0.0.1",
   "private": true,
-  "dependencies": {
-    "next": "~15.1.4",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+  "workspaces": [
+    "apps/extension"
+  ],
+  "scripts": {
+    "build": "yarn workspace @nagging/extension build",
+    "dev": "yarn workspace @nagging/extension dev",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "@eslint/js": "^9.8.0",
-    "@nx/eslint": "20.4.0",
-    "@nx/eslint-plugin": "20.4.0",
-    "@nx/js": "20.4.0",
-    "@nx/next": "20.4.0",
-    "@swc-node/register": "~1.9.1",
-    "@swc/core": "~1.5.7",
-    "@swc/helpers": "~0.5.11",
-    "@types/node": "18.16.9",
-    "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
-    "@typescript-eslint/eslint-plugin": "8.23.0",
-    "@typescript-eslint/parser": "8.23.0",
-    "autoprefixer": "10.4.13",
-    "eslint": "^9.8.0",
-    "eslint-config-next": "14.2.16",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-jsx-a11y": "6.10.1",
-    "eslint-plugin-react": "7.35.0",
-    "eslint-plugin-react-hooks": "5.0.0",
-    "nx": "20.4.0",
-    "postcss": "8.4.38",
-    "prettier": "^2.6.2",
-    "tailwindcss": "3.4.3",
-    "ts-node": "10.9.1",
-    "tslib": "^2.3.0",
-    "typescript": "~5.7.2"
-  },
-  "workspaces": [
-    "apps/*",
-    "libs/*"
-  ]
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.3.3"
+  }
 }
