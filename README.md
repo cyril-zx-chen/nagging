@@ -4,7 +4,7 @@ An AI-powered text suggestion tool that works anywhere you type.
 
 ## Project Structure
 
-```
+```text
 nagging/
 ├── apps/
 │   ├── extension/     # Chrome Extension (TypeScript)
