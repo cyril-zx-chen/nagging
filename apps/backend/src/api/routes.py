@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, WebSocket
 from fastapi.responses import StreamingResponse
+import os
 
-from ..ai.service import AIService, TextContext
-from ..cache.service import CacheService
+from ai.service import AIService, TextContext
+from cache.service import CacheService
 from .models import SuggestionRequest, SuggestionResponse
 
 router = APIRouter()
@@ -13,6 +14,15 @@ def get_ai_service():
 def get_cache_service():
     return CacheService()
 
+@router.get("/config")
+async def get_config():
+    """Get frontend configuration."""
+    return {
+        "max_tokens": int(os.getenv("FRONTEND_MAX_TOKENS", "50")),
+        "temperature": float(os.getenv("FRONTEND_TEMPERATURE", "0.7")),
+        "debounce_ms": int(os.getenv("FRONTEND_DEBOUNCE_MS", "500"))
+    }
+
 @router.post("/suggest", response_model=SuggestionResponse)
 async def get_suggestion(
     request: SuggestionRequest,
@@ -20,14 +30,15 @@ async def get_suggestion(
     cache_service: CacheService = Depends(get_cache_service),
 ) -> SuggestionResponse:
     """Get a text suggestion."""
-    # Try cache first
-    if cached := await cache_service.get(
-        request.text,
-        max_tokens=request.max_tokens,
-        temperature=request.temperature,
-    ):
-        return SuggestionResponse(suggestion=cached, cached=True)
+    # # Try cache first
+    # if cached := await cache_service.get(
+    #     request.text,
+    #     max_tokens=request.max_tokens,
+    #     temperature=request.temperature,
+    # ):
+    #     return SuggestionResponse(suggestion=cached, cached=True)
 
+    print(f"------Request------: {request}")
     # Get new suggestion
     context = TextContext(
         text=request.text,
@@ -36,13 +47,14 @@ async def get_suggestion(
     )
     suggestion = await ai_service.get_suggestion(context)
 
-    # Cache the result
-    await cache_service.set(
-        request.text,
-        suggestion,
-        max_tokens=request.max_tokens,
-        temperature=request.temperature,
-    )
+    print(f"------Suggestion------: {suggestion}")
+    # # Cache the result
+    # await cache_service.set(
+    #     request.text,
+    #     suggestion,
+    #     max_tokens=request.max_tokens,
+    #     temperature=request.temperature,
+    # )
 
     return SuggestionResponse(suggestion=suggestion, cached=False)
 

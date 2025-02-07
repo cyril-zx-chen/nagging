@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Nagging - Text Suggestions</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+      .input-container {
+        position: relative;
+        margin: 20px 0;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        padding: 12px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+        background: transparent;
+      }
+      #suggestion {
+        color: #666;
+        position: absolute;
+        pointer-events: none;
+        padding: 12px;
+        font-size: 16px;
+        white-space: pre-wrap;
+        z-index: -1;
+        background: transparent;
+      }
+      .status {
+        color: #666;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Nagging - Text Suggestions</h1>
+    <div class="input-container">
+      <div id="suggestion"></div>
+      <textarea
+        id="input"
+        placeholder="Start typing to see suggestions..."
+      ></textarea>
+    </div>
+    <div class="status" id="status"></div>
+
+    <script>
+      const input = document.getElementById('input');
+      const suggestion = document.getElementById('suggestion');
+      const status = document.getElementById('status');
+      let currentController = null;
+      let config = {
+        max_tokens: 50,
+        temperature: 0.7,
+        debounce_ms: 500,
+      };
+
+      // Load configuration from backend
+      async function loadConfig() {
+        try {
+          const response = await fetch('http://localhost:8000/api/config');
+          if (response.ok) {
+            config = await response.json();
+            console.log('Loaded config:', config);
+          }
+        } catch (error) {
+          console.error('Failed to load config:', error);
+        }
+      }
+
+      // Debounce function to limit API calls
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      // Get suggestions from API
+      async function getSuggestion(text) {
+        try {
+          if (currentController) {
+            currentController.abort();
+          }
+
+          currentController = new AbortController();
+          status.textContent = 'Getting suggestion...';
+
+          const response = await fetch('http://localhost:8000/api/suggest', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: text,
+              max_tokens: config.max_tokens,
+              temperature: config.temperature,
+            }),
+            signal: currentController.signal,
+          });
+
+          if (!response.ok) {
+            throw new Error('API request failed: ' + response.statusText);
+          }
+
+          const data = await response.json();
+          console.log('Received suggestion:', data);
+
+          if (input.value === text) {
+            suggestion.textContent = text + data.suggestion;
+            status.textContent = 'Suggestion received';
+          }
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            return;
+          }
+          console.error('Error:', error);
+          status.textContent = 'Error getting suggestion';
+          suggestion.textContent = '';
+        } finally {
+          currentController = null;
+        }
+      }
+
+      // Handle input changes
+      const handleInput = debounce(() => {
+        const text = input.value.trim();
+        if (text) {
+          getSuggestion(text);
+        } else {
+          suggestion.textContent = '';
+          status.textContent = '';
+        }
+      }, config.debounce_ms);
+
+      // Clear suggestion when user starts typing
+      input.addEventListener('input', () => {
+        suggestion.textContent = input.value;
+        status.textContent = '';
+        handleInput();
+      });
+
+      // 同步滚动位置
+      input.addEventListener('scroll', () => {
+        suggestion.style.top = -input.scrollTop + 'px';
+      });
+
+      // Load config when page loads
+      loadConfig().then(() => {
+        console.log('Configuration loaded');
+      });
+    </script>
+  </body>
+</html>
