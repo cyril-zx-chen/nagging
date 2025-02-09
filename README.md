@@ -18,6 +18,7 @@ nagging/
 - Python 3.11+
 - Poetry (package manager)
 - Redis (optional, for caching)
+- HuggingFace API key
 
 ### Environment Setup
 
@@ -34,7 +35,7 @@ python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-3. Install dependencies:
+3. Install dependencies with Poetry:
 
 ```bash
 pip install poetry
@@ -45,51 +46,93 @@ poetry install --no-root
 
 ```bash
 cp .env.example .env
-# Edit .env and add your OpenAI API key
+# Edit .env and add your HuggingFace API key
 ```
 
-### Running Tests
+### Environment Variables
 
-#### Quick Test
-
-To run a simple manual test of the AI service:
+The backend uses the following environment variables:
 
 ```bash
-python tests/test_ai.py
+# HuggingFace API Configuration
+HF_API_KEY=your_api_key_here
+HF_MODEL_URL=https://api-inference.huggingface.co/models/microsoft/phi-2
+
+# Frontend Configuration
+FRONTEND_MAX_TOKENS=20        # Maximum tokens to generate
+FRONTEND_TEMPERATURE=0.6      # Temperature for text generation
+FRONTEND_DEBOUNCE_MS=1000    # Debounce time for suggestions
+
+# AI Request Parameters
+AI_DO_SAMPLE=true            # Whether to use sampling
+AI_TOP_P=0.9                 # Top-p sampling parameter
+AI_STOP_TOKENS=\n,.,!,?      # Tokens to stop generation
+AI_RETURN_FULL_TEXT=false    # Whether to return full text
+AI_REQUEST_TIMEOUT=30.0      # API request timeout in seconds
 ```
 
-This will:
+### Running the Server
 
-- Test single-shot completion
-- Test streaming completion
-- Print results to console
-
-#### Full Test Suite
-
-To run all tests with pytest:
+Start the FastAPI server:
 
 ```bash
-pytest tests/ -v
+# Make sure you're in the src directory
+cd src
+
+# Run with Poetry
+poetry run python main.py
+
+# Or if already in Poetry shell
+python main.py
 ```
 
-For specific test files:
+### API Endpoints
 
-```bash
-pytest tests/test_ai.py -v  # AI service tests
-```
+- `/api/suggest` - Get text suggestions
+
+  - POST request with JSON body:
+    ```json
+    {
+      "text": "Your text here",
+      "max_tokens": 20,
+      "temperature": 0.6
+    }
+    ```
+
+- `/api/suggest/stream` - Stream text suggestions
+  - Same request format as `/api/suggest`
+  - Returns Server-Sent Events (SSE)
 
 ### Development
 
-1. Start the FastAPI server:
+The backend uses FastAPI with async support and integrates with HuggingFace's Inference API. Key components:
+
+- `ai/service.py` - Core AI service for text suggestions
+- `api/models.py` - Pydantic models for request/response
+- `main.py` - FastAPI application and routes
+
+### Development Tools
+
+All development tools are configured in `pyproject.toml`:
+
+- **Code Formatting**: black, isort
+- **Linting**: ruff
+- **Type Checking**: mypy
+- **Testing**: pytest, pytest-asyncio
+
+Run tools through Poetry:
 
 ```bash
-# Coming soon
+# Format code
+poetry run black .
+poetry run isort .
+
+# Type checking
+poetry run mypy .
+
+# Run tests
+poetry run pytest
 ```
-
-2. API endpoints:
-
-- `/api/suggest` - Get text suggestions
-- `/api/suggest/stream` - Stream text suggestions
 
 ## Extension Setup
 

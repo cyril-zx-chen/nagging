@@ -1,3 +1,20 @@
+"""
+AI Service for text suggestions using HuggingFace's Inference API.
+
+This module provides an asynchronous service for generating text suggestions
+using the HuggingFace Inference API. It supports both single-shot completions
+and streaming responses.
+
+Environment Variables:
+    HF_API_KEY: HuggingFace API key
+    HF_MODEL_URL: URL of the HuggingFace model to use
+    AI_DO_SAMPLE: Whether to use sampling (default: true)
+    AI_TOP_P: Top-p sampling parameter (default: 0.9)
+    AI_STOP_TOKENS: Tokens to stop generation (default: \n,.,!,?)
+    AI_RETURN_FULL_TEXT: Whether to return full text (default: false)
+    AI_REQUEST_TIMEOUT: API request timeout in seconds (default: 30.0)
+"""
+
 from typing import AsyncGenerator, Optional
 import os
 import asyncio
@@ -36,7 +53,6 @@ class AIService:
         self.headers = {"Authorization": f"Bearer {self.api_key}"}
 
     def _create_prompt(self, text: str) -> str:
-        """Create a prompt that will generate a natural continuation."""
         return f"""Assistant: I'll help you complete your text naturally. Here's how it continues:
 Human: {text}
 Assistant: Here's the continuation: {text}"""

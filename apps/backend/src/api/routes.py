@@ -82,4 +82,4 @@ async def stream_suggestion(
                 await websocket.send_text(suggestion)
 
     except Exception as e:
-        await websocket.close(code=1001, reason=str(e)) 
+        await websocket.close(code=1001, reason=str(e))
