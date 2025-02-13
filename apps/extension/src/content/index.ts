@@ -46,6 +46,8 @@ if (article) {
 // Track active input element
 let activeInput: HTMLInputElement | HTMLTextAreaElement | null = null;
 let debounceTimer: number | null = null;
+let justAcceptedSuggestion = false;
+let lastNonWhitespacePosition: number | null = null;
 
 // // Listen for input events
 document.addEventListener('focusin', (event) => {
@@ -80,6 +82,8 @@ function insertSuggestion(
   const newPosition = cursorPosition + suggestion.length;
   activeInput.setSelectionRange(newPosition, newPosition);
   activeInput.focus();
+  justAcceptedSuggestion = true;
+  lastNonWhitespacePosition = cursorPosition + suggestion.length;
 }
 
 let currentSuggestion = '';
@@ -118,6 +122,19 @@ function handleInput() {
 
   const text = activeInput.value;
   const cursorPosition = activeInput.selectionStart || 0;
+
+  // Skip API call if only whitespace was added after last non-whitespace position
+  if (justAcceptedSuggestion && lastNonWhitespacePosition !== null) {
+    const textAfterLastNonWhitespace = text.slice(lastNonWhitespacePosition);
+    if (
+      !textAfterLastNonWhitespace ||
+      textAfterLastNonWhitespace.trim() === ''
+    ) {
+      return;
+    }
+    justAcceptedSuggestion = false;
+    lastNonWhitespacePosition = null;
+  }
 
   console.log('Requesting suggestion:', { text, cursorPosition });
   hideSuggestion();
