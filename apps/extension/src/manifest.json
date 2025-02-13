@@ -3,7 +3,7 @@
   "name": "Nagging - AI Text Suggestions",
   "description": "Get real-time text suggestions as you type",
   "version": "0.1.0",
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": ["http://localhost:8000/*"],
   "action": {
     "default_popup": "popup.html",

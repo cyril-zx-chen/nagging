@@ -74,17 +74,14 @@ function handleInput() {
     },
   };
 
-  chrome.runtime
-    .sendMessage(message)
-    .then((response) => {
-      console.log('Suggestion received:', response);
-      if (response && activeInput) {
-        activeInput.value = activeInput.value + response;
-      }
-    })
-    .catch((error) => {
-      console.error('Error getting suggestion:', error);
-    });
+  chrome.runtime.sendMessage(message, (response) => {
+    console.log('Suggestion received:', response);
+    if (response && activeInput) {
+      activeInput.value = activeInput.value + response.suggestion;
+    } else {
+      console.error('No suggestion received');
+    }
+  });
 }
 
 // Debounce input handling
@@ -92,5 +89,5 @@ document.addEventListener('input', () => {
   if (debounceTimer) {
     window.clearTimeout(debounceTimer);
   }
-  debounceTimer = window.setTimeout(handleInput, 500); // 500ms debounce
+  debounceTimer = window.setTimeout(handleInput, 1000); // 1000ms debounce
 });
