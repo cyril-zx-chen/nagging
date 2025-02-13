@@ -1,0 +1,28 @@
+.suggestion-container {
+  position: relative;
+  display: inline-block;
+  margin: 8px 0;
+}
+
+.suggestion-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 300px;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.suggestion-overlay {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  pointer-events: none;
+  opacity: 0.6;
+  white-space: pre;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 8px;
+}

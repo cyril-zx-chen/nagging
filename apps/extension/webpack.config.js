@@ -74,6 +74,10 @@ module.exports = {
             return await convertSvgToPng(content, 128);
           },
         },
+        {
+          from: 'src/content/styles.css',
+          to: 'styles.css',
+        },
       ],
     }),
     new HtmlWebpackPlugin({

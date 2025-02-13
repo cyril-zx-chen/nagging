@@ -22,7 +22,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "css": []
+      "css": ["styles.css"]
     }
   ],
   "background": {
