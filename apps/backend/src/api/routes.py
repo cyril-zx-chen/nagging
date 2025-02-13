@@ -23,6 +23,11 @@ async def get_config():
         "debounce_ms": int(os.getenv("FRONTEND_DEBOUNCE_MS", "500"))
     }
 
+@router.post("/suggest/test")
+async def get_suggestion_test() -> SuggestionResponse:
+    suggestion = "Hello, world!"
+    return SuggestionResponse(suggestion=suggestion, cached=False)
+
 @router.post("/suggest", response_model=SuggestionResponse)
 async def get_suggestion(
     request: SuggestionRequest,

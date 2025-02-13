@@ -1,17 +1,15 @@
-console.log('*****7777*****');
-import browser from 'webextension-polyfill';
 import type { Message, SuggestionResponse } from '../types';
 
 console.log('*****Background script loaded*****');
 const API_BASE_URL = 'http://localhost:8000/api';
 
 // // Handle messages from content script
-browser.runtime.onMessage.addListener(async (message: Message) => {
+chrome.runtime.onMessage.addListener(async (message: Message) => {
   console.log('Background script received message:', message);
   if (message.type === 'GET_SUGGESTION') {
     try {
       console.log('Sending request to API:', message.data);
-      const response = await fetch(`${API_BASE_URL}/suggest`, {
+      const response = await fetch(`${API_BASE_URL}/suggest/test`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

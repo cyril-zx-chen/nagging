@@ -1,5 +1,3 @@
-import browser from 'webextension-polyfill';
-
 // Initialize settings
 document.addEventListener('DOMContentLoaded', async () => {
   const temperatureInput = document.getElementById(
@@ -12,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const maxTokensValue = maxTokensInput.nextElementSibling as HTMLElement;
 
   // Load saved settings
-  const settings = await browser.storage.local.get({
+  const settings = await chrome.storage.local.get({
     temperature: 0.6,
     maxTokens: 20,
   });
@@ -26,12 +24,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   temperatureInput.addEventListener('input', async () => {
     const value = parseFloat(temperatureInput.value);
     temperatureValue.textContent = value.toString();
-    await browser.storage.local.set({ temperature: value });
+    await chrome.storage.local.set({ temperature: value });
   });
 
   maxTokensInput.addEventListener('input', async () => {
     const value = parseInt(maxTokensInput.value, 10);
     maxTokensValue.textContent = value.toString();
-    await browser.storage.local.set({ maxTokens: value });
+    await chrome.storage.local.set({ maxTokens: value });
   });
 });

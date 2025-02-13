@@ -1,4 +1,3 @@
-import browser from 'webextension-polyfill';
 import type { Message } from '../types';
 
 const article = document.querySelector('article');
@@ -74,7 +73,8 @@ function handleInput() {
       cursorPosition,
     },
   };
-  browser.runtime
+
+  chrome.runtime
     .sendMessage(message)
     .then((response) => {
       console.log('Suggestion received:', response);

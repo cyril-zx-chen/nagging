@@ -53,9 +53,7 @@ class AIService:
         self.headers = {"Authorization": f"Bearer {self.api_key}"}
 
     def _create_prompt(self, text: str) -> str:
-        return f"""Assistant: I'll help you complete your text naturally. Here's how it continues:
-Human: {text}
-Assistant: Here's the continuation: {text}"""
+        return f"""Complete the following text naturally and briefly: {text}"""
 
     async def get_suggestion(self, context: TextContext) -> str:
         """Get a single completion suggestion."""

@@ -8,12 +8,8 @@
     "lint": "eslint src/",
     "format": "prettier --write src/"
   },
-  "dependencies": {
-    "webextension-polyfill": "^0.10.0"
-  },
   "devDependencies": {
     "@types/chrome": "^0.0.260",
-    "@types/webextension-polyfill": "^0.10.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "copy-webpack-plugin": "^12.0.2",
